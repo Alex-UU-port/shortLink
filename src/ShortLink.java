@@ -25,12 +25,22 @@ public class ShortLink {
     }
 
     public boolean canRedirect() {
-        return !isExpired() && currentRedirects < maxRedirects;
+        return !isExpired() && (currentRedirects < maxRedirects);
     }
 
     public void incrementRedirects() {
         currentRedirects++;
     }
 
-    // геттеры и сеттеры
+    public int getCurrentRedirects() {
+        return this.currentRedirects;
+    }
+
+    public int getMaxRedirects() {
+        return this.maxRedirects;
+    }
+
+    public String getOriginalUrl() {
+        return this.originalUrl;
+    }
 }

@@ -12,7 +12,6 @@ public class Main {
     Обеспечить безопасность доступа к ссылкам и управление ними.
     Добавить обработку ошибок, логирование, уведомления.
     */
-    //sdsdsd
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);

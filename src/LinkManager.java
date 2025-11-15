@@ -48,5 +48,7 @@ public class LinkManager {
         return null;
     }
 
+
+
     // Дополнительные методы: удаление, получение по UUID пользователя, и др.
 }
