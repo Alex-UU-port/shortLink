@@ -1,19 +1,16 @@
 import java.awt.Desktop;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class Main {
 
     static Scanner scanner = new Scanner(System.in);
-    static List<User> users = new ArrayList<>();
-    LinkManager manager = new LinkManager();
+    static private List<User> users = new ArrayList<>();
+    static LinkManager manager = new LinkManager();
 
     public static void main(String[] args) {
 
-        users = User.fromJSON();
+        users = User.fromJSON("users.json");
 
         //меню авторизации, регистрации и просмотра пользователей с UUID
         label:
@@ -25,8 +22,9 @@ public class Main {
             String cmd = scanner.nextLine();
             switch (cmd) {
                 case "1":
-                    toAuthorization();
-                    toRun();
+                    User activeUser = toAuthorization();
+                    if(activeUser != null) {
+                    toRun(activeUser);}
                     break;
                 case "2":
                     toRegister();
@@ -35,31 +33,33 @@ public class Main {
                     toPrintUsers(users);
                     break;
                 case "0":
-                    User.saveJSON(users);
+                    User.saveJSON(users, "users.json");
+                    manager.saveJSON(manager.links, "links.json");
                     break label;
                 default:
                     System.out.println("Неизвестная команда!");
                     break;
             }
         }
-
+        scanner.close();
     }
 
     //меню управления ссылками
-    public static void toRun() {
+    public static void toRun(User activeUser) {
         label:
         while(true) {
-            System.out.println("Введите \"1\", для просмотра ранее созданных коротких ссылок;\n" +
+            System.out.println(activeUser.getLogin() + ": \n" +
+                            "Введите \"1\", для просмотра ранее созданных коротких ссылок;\n" +
                             "Введите \"2\", для создания новой короткой ссылки;\n" +
-                            "Введите \"3\" для удаления короткой ссылки;\n" +
-                    "Введите \"0\", для выхода из программы;\n");
+                            "Введите \"3\" для УДАЛЕНИЯ короткой ссылки;\n" +
+                            "Введите \"0\", для выхода из программы;\n");
             String cmd = scanner.nextLine();
             switch (cmd) {
                 case "1":
-
+                    manager.toPrintLinksKey();
                     break;
                 case "2":
-
+                    toCreateShortLink(activeUser);
                     break;
                 case "3":
                     //String shortUrl = makeShortLink();
@@ -121,19 +121,23 @@ public class Main {
                 System.out.println("\nПользователь найден!\n");
                 activUser = user;
                 break;
+            } else {
+                System.out.println("\nПользователя с таким именем и паролем нет!\n");
             }
         }
         return activUser;
     }
 
+    public static void toCreateShortLink(User activeUser) {
+        System.out.println("Введите длинный URL для сокращения:");
+        String longUrl = scanner.nextLine();
+
+        // Создаем короткую ссылку
+        String shortUrl = manager.createShortLink(longUrl, activeUser, 5, 24); // лимит 5 и срок 24 часа
+        System.out.println("Создана короткая ссылка: " + shortUrl);
+    }
+
                 /*
-            System.out.println("Введите длинный URL для сокращения:");
-            String longUrl = scanner.nextLine();
-
-
-            // Создаем короткую ссылку
-            String shortUrl = manager.createShortLink(longUrl, userUuid, 5, 24); // лимит 5 и срок 24 часа
-            System.out.println("Создана короткая ссылка: " + shortUrl);
 
             // имитируем переход
             System.out.println("Переход по короткой ссылке...");

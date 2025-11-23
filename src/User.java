@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +41,7 @@ public class User {
         System.out.println(this.toString());
     }
 
-    public static void saveJSON (List<User> users) {
-        String path = "users.json";
+    public static void saveJSON (List<User> users, String path) {
 
         // Используем try-with-resources, чтобы автоматически закрывать writer
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
@@ -54,13 +52,13 @@ public class User {
                 writer.write(jsonString);
                 writer.newLine();
             }
+            System.out.println("Данные успешно сохранены в файл users.json");
         } catch (IOException e) {
             System.out.println("Какие-то проблемы с формированием json: " + e.getMessage());
         }
     }
 
-    public static List<User> fromJSON() {
-        String path = "users.json"; // путь к файлу json
+    public static List<User> fromJSON(String path) {
         List<User> users = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
