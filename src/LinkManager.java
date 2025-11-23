@@ -47,12 +47,7 @@ public class LinkManager {
         ShortLink link = links.get(shortCode);
         if (link == null) {
             return null;
-        }
-        if (link.isExpired() || link.getCurrentRedirects() >= link.getMaxRedirects()) {
-            links.remove(shortCode);
-            return null;
-        }
-        if (link.canRedirect()) {
+        } else if (link.canRedirect()) {
             link.incrementRedirects();
             return link.getOriginalUrl();
         }
@@ -72,7 +67,7 @@ public class LinkManager {
         System.out.println("\n");
     }
 
-    public static void saveJSON (Map<String, ShortLink> links, String path) {
+    public void saveJSON (Map<String, ShortLink> links, String path) {
 
         ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
         // Используем try-with-resources, чтобы автоматически закрывать writer

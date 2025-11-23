@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -68,15 +67,12 @@ public class ShortLink {
 
     @Override
     public String toString() {
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-        String line = "Оригинальный URL: " + this.originalUrl + "\nКороткая ссылка: " + this.shortCode + "\nПользователь: " + this.user.getLogin() +
+        return "Оригинальный URL: " + this.originalUrl + "\nКороткая ссылка: " + this.shortCode + "\nПользователь: " + this.user.getLogin() +
                         "\nМаксимальное разрешенное количество переходов: " +  this.maxRedirects + "\nСовершенных переходов: " + this.currentRedirects +
                         "\nДата создания: " + this.creationTime.format(formatter) + "\nПродолжительность существования до: " + this.expiryTime.format(formatter) +
                         "\n";
-        return line;
-    }
+        }
 
     public void toPrint() {
         System.out.println(this.toString());

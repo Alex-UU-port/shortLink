@@ -142,18 +142,26 @@ public class Main {
         System.out.println("\nВведите короткую ссылку: ");
         String strShortLink = scanner.nextLine();
         String shortUrl = strShortLink.replace("clck.ru/", "");
-        System.out.println(shortUrl);
-
 
         if (manager.getLinks().containsKey(shortUrl)) {
-            System.out.println("Переход по короткой ссылке...");
-            String original = manager.getOriginalUrl(shortUrl);
-
-            System.out.println("Редирект на: " + original);
-            try {
-                Desktop.getDesktop().browse(new URI(original));
-            } catch (URISyntaxException | IOException e) {
-                System.out.println("Что то пошло не так" + e.getMessage());
+            ShortLink shortLink = manager.getLinks().get(shortUrl);
+            if (!shortLink.isExpired()) {
+                if (shortLink.canRedirect()) {
+                    System.out.println("Переход по короткой ссылке...");
+                    String original = manager.getOriginalUrl(shortUrl);
+                    System.out.println("Редирект на: " + original);
+                    System.out.println("Переходов по ссылке: " + );
+                    try {
+                        Desktop.getDesktop().browse(new URI(original));
+                    } catch (URISyntaxException | IOException e) {
+                        System.out.println("Что то пошло не так" + e.getMessage());
+                    }
+                } else {
+                    System.out.println("Достигнут лимит переходов по ссылке, обратитесь к владельцу ссылки для увеличения лимита.");
+                }
+            } else {
+                manager.getLinks().remove(shortUrl);
+                System.out.println("Срок действия ссылки истек, ссылка больше не доступна и после получения этого сообщения была удалена!");
             }
         } else {
             System.out.println("Ссылка не найдена!");
