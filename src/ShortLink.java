@@ -1,12 +1,7 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class ShortLink {
     private String originalUrl;
@@ -27,10 +22,14 @@ public class ShortLink {
         this.expiryTime = creationTime.plusHours(lifespanHours);
     }
 
+    public ShortLink() {}
+
+    @JsonIgnore
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiryTime);
     }
 
+    @JsonIgnore
     public boolean canRedirect() {
         return !isExpired() && (currentRedirects < maxRedirects);
     }
@@ -39,20 +38,32 @@ public class ShortLink {
         currentRedirects++;
     }
 
-    public int getCurrentRedirects() {
-        return this.currentRedirects;
+    public String getOriginalUrl() {
+        return this.originalUrl;
     }
 
     public String getShortCode() {
         return this.shortCode;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
     public int getMaxRedirects() {
         return this.maxRedirects;
     }
 
-    public String getOriginalUrl() {
-        return this.originalUrl;
+    public int getCurrentRedirects() {
+        return this.currentRedirects;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return this.creationTime;
+    }
+
+    public LocalDateTime getExpiryTime() {
+        return this.expiryTime;
     }
 
     @Override
@@ -60,9 +71,10 @@ public class ShortLink {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
-        String line = "Оригинальный URL: " + this.originalUrl + "\tКороткая ссылка: " + this.shortCode + "Пользователь: " + this.user.getLogin() +
-                        "Максимальное разрешенное количество переходов: " +  this.maxRedirects + "Совершенных переходов: " + this.currentRedirects +
-                        "Дата создания: " + this.creationTime.format(formatter) + "Продолжительность существования до: " + this.expiryTime.format(formatter);
+        String line = "Оригинальный URL: " + this.originalUrl + "\nКороткая ссылка: " + this.shortCode + "\nПользователь: " + this.user.getLogin() +
+                        "\nМаксимальное разрешенное количество переходов: " +  this.maxRedirects + "\nСовершенных переходов: " + this.currentRedirects +
+                        "\nДата создания: " + this.creationTime.format(formatter) + "\nПродолжительность существования до: " + this.expiryTime.format(formatter) +
+                        "\n";
         return line;
     }
 

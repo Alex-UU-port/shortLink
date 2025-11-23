@@ -1,12 +1,19 @@
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.*;
 import java.util.*;
 
 public class LinkManager {
     Map<String, ShortLink> links = new HashMap<>();
-
     private Random random = new Random();
+
+    public Map<String, ShortLink> getLinks() {
+        return this.links;
+    }
+
+    public LinkManager() {
+        fromJSON("links.json");
+    }
 
     // Создание короткой ссылки
     public String createShortLink(String originalUrl, User user, int maxRedirects, int lifespanHours) {
@@ -55,7 +62,9 @@ public class LinkManager {
     public void toPrintLinksKey() {
         if (!links.isEmpty()) {
             for (String key : links.keySet()) {
-                System.out.println("clck.ru/" + key);
+                //System.out.println("clck.ru/" + key);
+                ShortLink shortLink = links.get(key);
+                shortLink.toPrint();
             }
         } else {
             System.out.println("Ссылок не найдено не найдено!");
@@ -67,7 +76,6 @@ public class LinkManager {
 
         ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
         // Используем try-with-resources, чтобы автоматически закрывать writer
-
         try {
             objectMapper.writeValue(new File(path), links);
             System.out.println("Данные успешно сохранены в файл links.json");
@@ -76,22 +84,15 @@ public class LinkManager {
         }
     }
 
-    public static List<User> fromJSON(String path) {
-        //List<User> users = new ArrayList<>();
+    public void fromJSON(String path) {
 
         ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                ShortLink shortLink = mapper.readValue(line, User.class);
-                links.put(user);
-            }
+        try {
+            this.links = mapper.readValue(new File(path), new TypeReference<Map<String, ShortLink>>() {});
         } catch (IOException e) {
             System.out.println("Какие-то проблемы с чтением json: " + e.getMessage());
         }
-        return users;
+        //return links;
     }
 
     // Дополнительные методы: удаление, получение по UUID пользователя, и др.

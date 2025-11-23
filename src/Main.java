@@ -1,5 +1,7 @@
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class Main {
@@ -51,7 +53,7 @@ public class Main {
             System.out.println(activeUser.getLogin() + ": \n" +
                             "Введите \"1\", для просмотра ранее созданных коротких ссылок;\n" +
                             "Введите \"2\", для создания новой короткой ссылки;\n" +
-                            "Введите \"3\" для УДАЛЕНИЯ короткой ссылки;\n" +
+                            "Введите \"3\" для перехода по короткой ссылке;\n" +
                             "Введите \"0\", для выхода из программы;\n");
             String cmd = scanner.nextLine();
             switch (cmd) {
@@ -62,8 +64,7 @@ public class Main {
                     toCreateShortLink(activeUser);
                     break;
                 case "3":
-                    //String shortUrl = makeShortLink();
-
+                    toRedirect();
                     break;
                 case "0":
                     break label;
@@ -137,18 +138,25 @@ public class Main {
         System.out.println("Создана короткая ссылка: " + shortUrl);
     }
 
-                /*
+    public static void toRedirect() {
+        System.out.println("\nВведите короткую ссылку: ");
+        String strShortLink = scanner.nextLine();
+        String shortUrl = strShortLink.replace("clck.ru/", "");
+        System.out.println(shortUrl);
 
-            // имитируем переход
+
+        if (manager.getLinks().containsKey(shortUrl)) {
             System.out.println("Переход по короткой ссылке...");
-            String original = manager.getOriginalUrl(shortUrl.replace("clck.ru/", ""));
-            if (original != null) {
-                System.out.println("Редирект на: " + original);
-                Desktop.getDesktop().browse(new URI(original));
-            } else {
-                System.out.println("Ссылка недоступна или лимит исчерпан.");
-            }
-            scanner.close();
-            */
+            String original = manager.getOriginalUrl(shortUrl);
 
+            System.out.println("Редирект на: " + original);
+            try {
+                Desktop.getDesktop().browse(new URI(original));
+            } catch (URISyntaxException | IOException e) {
+                System.out.println("Что то пошло не так" + e.getMessage());
+            }
+        } else {
+            System.out.println("Ссылка не найдена!");
+        }
+    }
 }
