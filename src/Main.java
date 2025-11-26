@@ -53,8 +53,9 @@ public class Main {
             System.out.println(activeUser.getLogin() + ": \n" +
                             "Введите \"1\", для просмотра ранее созданных коротких ссылок;\n" +
                             "Введите \"2\", для создания новой короткой ссылки;\n" +
-                            "Введите \"3\" для перехода по короткой ссылке;\n" +
-                            "Введите \"0\", для выхода из программы;\n");
+                            "Введите \"3\", для перехода по короткой ссылке;\n" +
+                            "Введите \"4\", для редактирования ссылок\n" +
+                            "Введите \"0\", для выхода из профиля;\n");
             String cmd = scanner.nextLine();
             switch (cmd) {
                 case "1":
@@ -65,6 +66,43 @@ public class Main {
                     break;
                 case "3":
                     toRedirect();
+                    break;
+                case "4":
+                    toEditLink(activeUser);
+                    break;
+                case "0":
+                    break label;
+                default:
+                    System.out.println("Неизвестная команда!");
+                    break;
+            }
+        }
+    }
+
+    //меню редактирования и удаления ссылок
+    public static void toEditLink(User activeUser) {
+        String shortLink;
+        label:
+        while(true) {
+            System.out.println(activeUser.getLogin() + ": \n" +
+                    "Введите \"1\", для изменения количества переходов;\n" +
+                    "Введите \"2\", для изменения срока действия ссылки;\n" +
+                    "Введите \"3\", для удаления ссылки;\n" +
+                    "Введите \"0\", для переходы в предыдущее меню;\n");
+            String cmd = scanner.nextLine();
+
+            switch (cmd) {
+                case "1":
+                    shortLink = toReadShortLink();
+                    manager.toEditRedirect(shortLink, activeUser);
+                    break;
+                case "2":
+                    shortLink = toReadShortLink();
+                    manager.toEditExpiryTime(shortLink, activeUser);
+                    break;
+                case "3":
+                    shortLink = toReadShortLink();
+                    manager.toRemove(shortLink, activeUser);
                     break;
                 case "0":
                     break label;
@@ -114,18 +152,18 @@ public class Main {
 
         System.out.println("\nВведите пароль: ");
         String pass = scanner.nextLine();
-
         User activUser = null;
+        boolean isBe = false;
 
         for (User user : users) {
             if (log.equals(user.getLogin()) && pass.equals(user.getPassword())) {
                 System.out.println("\nПользователь найден!\n");
                 activUser = user;
+                isBe = true;
                 break;
-            } else {
-                System.out.println("\nПользователя с таким именем и паролем нет!\n");
             }
         }
+        if(!isBe) {System.out.println("Пользователя с таким именем и паролем не найдено!");}
         return activUser;
     }
 
@@ -138,11 +176,15 @@ public class Main {
         System.out.println("Создана короткая ссылка: " + shortUrl);
     }
 
-    public static void toRedirect() {
+    public static String toReadShortLink() {
         System.out.println("\nВведите короткую ссылку: ");
         String strShortLink = scanner.nextLine();
-        String shortUrl = strShortLink.replace("clck.ru/", "");
+        return strShortLink.replace("clck.ru/", "");
+    }
 
+    public static void toRedirect() {
+
+        String shortUrl = toReadShortLink();
         if (manager.getLinks().containsKey(shortUrl)) {
             ShortLink shortLink = manager.getLinks().get(shortUrl);
             if (!shortLink.isExpired()) {
@@ -150,7 +192,7 @@ public class Main {
                     System.out.println("Переход по короткой ссылке...");
                     String original = manager.getOriginalUrl(shortUrl);
                     System.out.println("Редирект на: " + original);
-                    System.out.println("Переходов по ссылке: " + );
+                    System.out.println("Переходов по ссылке: ");
                     try {
                         Desktop.getDesktop().browse(new URI(original));
                     } catch (URISyntaxException | IOException e) {

@@ -1,6 +1,9 @@
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class LinkManager {
@@ -90,5 +93,80 @@ public class LinkManager {
         //return links;
     }
 
-    // Дополнительные методы: удаление, получение по UUID пользователя, и др.
+    public boolean toRightsCheck(String shortLink, User activeUser) {
+        if (links.containsKey(shortLink)) {
+            ShortLink link = links.get(shortLink);
+            if (activeUser.equals(link.getUser())) {
+                return true;
+            } else {
+                System.out.println("Ссылка принадлежит пользователю " + link.getUser().getLogin() +
+                ", вы не можете её удалить или редактировать");
+                return false;
+            }
+        } else {
+            System.out.println("Ссылка не найдена!");
+            return false;
+        }
+    }
+
+    public void toRemove(String shortLink, User activeUser) {
+        if(toRightsCheck(shortLink, activeUser)) {
+            links.remove(shortLink);
+            System.out.println("Ссылка удалена!");
+        }
+    }
+
+    public int toReadMaxRedirects() {
+        int maxRedirects = 0;
+
+        while (maxRedirects < 1) {
+            System.out.println("\nВведите новое максимальное количество переходов по ссылке (от 1 до  2 147 483 647): ");
+            String line = Main.scanner.nextLine();
+            try {
+                maxRedirects = Integer.parseInt(line);
+            } catch (NumberFormatException e) {
+                System.out.println("Введенное значение не соответствует требованиям!\n");
+            }
+        }
+        return maxRedirects;
+    }
+
+    public void toEditRedirect(String shortLink, User activeUser) {
+        if(toRightsCheck(shortLink, activeUser)) {
+            int maxRedirects = toReadMaxRedirects();
+            links.get(shortLink).setMaxRedirects(maxRedirects);
+            System.out.println("\nМаксимальное количество переходов изменено!");
+        }
+    }
+
+    public LocalDateTime toReadExpiryTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        LocalDateTime dateTime;
+
+        while (true) {
+        System.out.println("\nВведите новую дату и время до которой ссылка будет доступна в формате \"dd-MM-yyyy HH:mm:ss\" : ");
+        String line = Main.scanner.nextLine();
+        try {
+            dateTime = LocalDateTime.parse(line, formatter);
+            if (dateTime.isAfter(LocalDateTime.now())) {
+                break;
+            } else {
+                System.out.println("\nДата и время должны быть позднее настоящего времени!");
+            }
+
+        } catch (DateTimeParseException e) {
+            System.out.println("\nНекорректный формат даты и времени!");
+        }
+        }
+        return dateTime;
+    }
+
+    public void toEditExpiryTime(String shortLink, User activeUser) {
+        if(toRightsCheck(shortLink, activeUser)) {
+            LocalDateTime dateTime = toReadExpiryTime();
+            links.get(shortLink).setExpiryTime(dateTime);
+            System.out.println("\nВремя существования ссылки (доступности), изменено!");
+        }
+    }
+
 }

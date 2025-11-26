@@ -33,8 +33,15 @@ public class User {
 
     @Override
     public String toString() {
-        String line = "Логин: " + this.login + "\tUUID: " + this.userId;
-        return line;
+        return "Логин: " + this.login + "\tUUID: " + this.userId;
+        }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // одна ссылка
+        if (obj == null || getClass() != obj.getClass()) return false; // разные классы или null
+        User user = (User)obj; // приведение
+        return this.login.equals(user.getLogin()) && this.userId.equals(user.getUserId()); // сравнение полей
     }
 
     public void toPrint() {

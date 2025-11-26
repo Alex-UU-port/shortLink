@@ -65,6 +65,16 @@ public class ShortLink {
         return this.expiryTime;
     }
 
+    public void setMaxRedirects(int value) {
+        if (value > 0) {
+            this.maxRedirects = value;
+        } else {System.out.println("Ошибка, значение должно быть больше \"0\" ");}
+    }
+
+    public void setExpiryTime(LocalDateTime dateTime) {
+        this.expiryTime = dateTime;
+    }
+
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
