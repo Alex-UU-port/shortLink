@@ -78,14 +78,14 @@ public class ShortLink {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        return "Оригинальный URL: " + this.originalUrl + "\nКороткая ссылка: " + this.shortCode + "\nПользователь: " + this.user.getLogin() +
+        return "Оригинальный URL: " + this.originalUrl + "\nКороткая ссылка: clck.ru/" + this.shortCode + "\nПользователь: " + this.user.getLogin() +
                         "\nМаксимальное разрешенное количество переходов: " +  this.maxRedirects + "\nСовершенных переходов: " + this.currentRedirects +
                         "\nДата создания: " + this.creationTime.format(formatter) + "\nПродолжительность существования до: " + this.expiryTime.format(formatter) +
                         "\n";
         }
 
     public void toPrint() {
-        System.out.println(this.toString());
+        System.out.println(toString());
     }
 
 }

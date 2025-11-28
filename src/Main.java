@@ -37,6 +37,8 @@ public class Main {
                 case "0":
                     User.saveJSON(users, "users.json");
                     manager.saveJSON(manager.links, "links.json");
+                    //остановка процесса по удалению просроченных ссылок
+                    manager.scheduler.shutdown();
                     break label;
                 default:
                     System.out.println("Неизвестная команда!");
@@ -168,11 +170,12 @@ public class Main {
     }
 
     public static void toCreateShortLink(User activeUser) {
-        System.out.println("Введите длинный URL для сокращения:");
-        String longUrl = scanner.nextLine();
+        String longUrl = manager.toReadOriginalUrl();
+
+
 
         // Создаем короткую ссылку
-        String shortUrl = manager.createShortLink(longUrl, activeUser, 5, 24); // лимит 5 и срок 24 часа
+        String shortUrl = manager.createShortLink(longUrl, activeUser);
         System.out.println("Создана короткая ссылка: " + shortUrl);
     }
 
